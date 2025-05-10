@@ -8,6 +8,8 @@ var app = require('../app');
 var debug = require('debug')('moodifybackend:server');
 var http = require('http');
 
+require("../database/models/index.js");
+
 /**
  * Get port from environment and store in Express.
  */
