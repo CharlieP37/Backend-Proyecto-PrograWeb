@@ -14,6 +14,7 @@ User.init(
         },
         username: {
             type: DataTypes.STRING(50),
+            unique: true,
             allowNull: false
         },
         password: {
@@ -26,11 +27,11 @@ User.init(
         },
         person_Id: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: true
         },
         quiz_Id: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: true
         }
     },
     {
