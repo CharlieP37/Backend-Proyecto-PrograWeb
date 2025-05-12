@@ -19,7 +19,7 @@ Type.init(
     },
     {
         sequelize,
-        modelName: "Type",
+        modelName: "TYPE",
         timestamps: false,
         paranoid: false
     }

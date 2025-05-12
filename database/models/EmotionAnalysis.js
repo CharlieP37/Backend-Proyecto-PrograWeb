@@ -27,7 +27,7 @@ EmotionAnalysis.init(
     },
     {
         sequelize,
-        modelName: "Emotion_Analysis",
+        modelName: "EMOTION_ANALYSIS",
         timestamps: false,
         paranoid: false
     }

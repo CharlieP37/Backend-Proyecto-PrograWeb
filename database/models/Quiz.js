@@ -30,7 +30,7 @@ Quiz.init(
     },
     {
         sequelize,
-        modelName: "Quiz",
+        modelName: "QUIZ",
         timestamps: false,
         paranoid: false
     }

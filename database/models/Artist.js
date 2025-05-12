@@ -24,7 +24,7 @@ Artist.init(
     },
     {
         sequelize,
-        modelName: "Artist",
+        modelName: "ARTIST",
         timestamps: true,
         paranoid: true
     }

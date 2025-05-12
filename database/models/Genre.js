@@ -24,7 +24,7 @@ Genre.init(
     },
     {
         sequelize,
-        modelName: "Genre",
+        modelName: "GENRE",
         timestamps: true,
         paranoid: true
     }

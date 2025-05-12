@@ -4,9 +4,9 @@ const database = require("../database/config.js");
 const User = require("../database/models/User.js");
 require('dotenv').config();
 
-const SALT_ROUNDS = 12;
-const PEPPER = "PROGRAWEB2025";
-const JWT_SECRET = "PROYECTOMOODIFY-PROGRAWEB2025";
+const SALT_ROUNDS = parseInt(process.env.SALT_ROUNDS);
+const PEPPER = parseInt(process.env.PEPPER);
+const JWT_SECRET = process.env.JWT_SECRET;
 
 async function hashPassword(passwordPlain){
     const salt = await bcrypt.genSalt(SALT_ROUNDS);

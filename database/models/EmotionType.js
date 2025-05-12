@@ -19,7 +19,7 @@ EmotionType.init(
     },
     {
         sequelize,
-        modelName: "Emotion_type",
+        modelName: "EMOTION_TYPE",
         timestamps: false,
         paranoid: false
     }

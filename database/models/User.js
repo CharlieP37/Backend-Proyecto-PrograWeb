@@ -36,7 +36,7 @@ User.init(
     },
     {
         sequelize,
-        modelName: "User",
+        modelName: "USER",
         timestamps: true,
         paranoid: true
     }

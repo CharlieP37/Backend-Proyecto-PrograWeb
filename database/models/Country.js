@@ -23,7 +23,7 @@ Country.init(
     },
     {
         sequelize,
-        modelName: "Country",
+        modelName: "COUNTRY",
         timestamps: false,
         paranoid: false
     }

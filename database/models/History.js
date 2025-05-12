@@ -19,7 +19,7 @@ History.init(
     },
     {
         sequelize,
-        modelName: "History",
+        modelName: "HISTORY",
         timestamps: true,
         paranoid: true
     }
