@@ -12,11 +12,6 @@ Genre.init(
             unique: true,
             allowNull: false
         },
-        spotify_Id: {
-            type: DataTypes.INTEGER,
-            unique: true,
-            allowNull: false
-        },
         name: {
             type: DataTypes.STRING(50),
             allowNull: false
