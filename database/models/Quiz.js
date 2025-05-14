@@ -12,6 +12,11 @@ Quiz.init(
             unique: true,
             allowNull: false
         },
+        user_Id: {
+            type: DataTypes.INTEGER,
+            unique: true,
+            allowNull: false
+        },
         question_1: {
             type: DataTypes.INTEGER,
             unique: true,

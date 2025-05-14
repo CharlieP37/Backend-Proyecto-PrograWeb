@@ -15,8 +15,8 @@ const User = require("./User.js");
 Country.hasMany(Person, {foreignKey: "country_Id"});
 Person.belongsTo(Country, {foreignKey: "coutry_Id"});
 
-Person.hasMany(User, {foreignKey: "person_Id"});
-User.belongsTo(Person, {foreignKey: "person_Id"});
+User.hasOne(Person, {foreignKey: "user_Id"});
+Person.belongsTo(User, {foreignKey: "user_Id"});
 
 Genre.hasMany(Quiz, {foreignKey: "question_Id"});
 Quiz.belongsTo(Genre, {foreignKey: "question_Id"});
@@ -27,8 +27,8 @@ Quiz.belongsTo(Artist, {foreignKey: "question_2"});
 Song.hasMany(Quiz, {foreignKey: "question_3"});
 Quiz.belongsTo(Song, {foreignKey: "question_3"});
 
-Quiz.hasOne(User, {foreignKey:"quiz_Id"});
-User.belongsTo(User, {foreignKey:"quiz_Id"});
+User.hasOne(Quiz, {foreignKey:"user_Id"});
+Quiz.belongsTo(User, {foreignKey:"user_Id"});
 
 User.hasOne(History, {foreignKey: "user_Id"});
 History.belongsTo(User, {foreignKey: "user_Id"});

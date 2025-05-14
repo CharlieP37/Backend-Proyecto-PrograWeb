@@ -24,14 +24,6 @@ User.init(
         email: {
             type: DataTypes.STRING(255),
             allowNull: false
-        },
-        person_Id: {
-            type: DataTypes.INTEGER,
-            allowNull: true
-        },
-        quiz_Id: {
-            type: DataTypes.INTEGER,
-            allowNull: true
         }
     },
     {

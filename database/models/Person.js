@@ -12,6 +12,10 @@ Person.init(
             unique: true,
             allowNull: false
         },
+        user_Id: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
         name: {
             type: DataTypes.STRING(100),
             allowNull: false

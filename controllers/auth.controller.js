@@ -65,9 +65,7 @@ const registerNewUser = async (req, res, next) => {
         const newUser = await User.create({
             username: user,
             password: hashedpass,
-            email: email,
-            person_Id: null,
-            quiz_Id: null
+            email: email
         });
 
         usercreated = newUser;
