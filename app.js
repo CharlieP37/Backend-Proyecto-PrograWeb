@@ -11,6 +11,7 @@ var authRouter = require("./routes/auth");
 var userRouter = require('./routes/user');
 var emotionRouter = require('./routes/emotion');
 var recommendationsRouter = require('./routes/recommendations');
+var quizRouter = require('./routes/quiz');
 var dashboardRouter = require('./routes/dashboard');
 
 var app = express();
@@ -33,6 +34,7 @@ app.use('/user', userRouter);
 app.use('/emotion', emotionRouter);
 app.use('/recommendations', recommendationsRouter);
 app.use('/dashboard', dashboardRouter);
+app.use('/quiz', quizRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
