@@ -13,7 +13,7 @@ const Type = require("./Type.js");
 const User = require("./User.js");
 
 Country.hasMany(Person, {foreignKey: "country_Id"});
-Person.belongsTo(Country, {foreignKey: "coutry_Id"});
+Person.belongsTo(Country, {foreignKey: "country_Id"});
 
 User.hasOne(Person, {foreignKey: "user_Id"});
 Person.belongsTo(User, {foreignKey: "user_Id"});
