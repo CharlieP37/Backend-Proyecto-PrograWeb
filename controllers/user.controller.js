@@ -20,8 +20,6 @@ const obtainInfo = async (req, res, next) => {
 
     const tokenpayload = await tokenVerification(token);
 
-    let profileInfo = null;
-
     try {
         const personInfo = await Person.findAll({ where: {user_Id: tokenpayload.id}});
         console.log(personInfo);
@@ -40,4 +38,32 @@ const obtainOptions = async (req, res, next) => {
     }
 };
 
-module.exports = { obtainInfo, obtainOptions };
+const saveInfo = async (req, res, next) => {
+    const { token, profile } = req.body;
+
+    const tokenpayload = await tokenVerification(token);
+
+    if (!profile.name || !profile.lastname || !profile.birthdate || !profile.sex || !profile.country){
+        res.status(400).json({ error: "Error no se encuentran todos los datos necesarios" });
+    }
+
+    try {
+        
+        const newPerson = await Person.create({
+            user_Id: tokenpayload.id,
+            name: profile.name,
+            lastname: profile.lastname,
+            birthdate: profile.birthdate,
+            sex: profile.sex,
+            country_Id: profile.country
+        });
+        
+        return res.status(200).json({ message: "Person created successfully", newPerson });
+
+    } catch (error) {
+        res.status(500).json({ error: "Error al crear nuevo perfil de persona", details: error.message});
+    }
+    
+};
+
+module.exports = { obtainInfo, obtainOptions, saveInfo };
