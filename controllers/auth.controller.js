@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require('bcrypt');
 const database = require("../database/config.js");
 const User = require("../database/models/User.js");
+const History = require("../database/models/History.js");
 require('dotenv').config();
 
 const SALT_ROUNDS = parseInt(process.env.SALT_ROUNDS);
@@ -73,6 +74,18 @@ const registerNewUser = async (req, res, next) => {
     }
     catch (err) {
         res.status(500).json({ error: "Error al crear nuevo usuario", details: err});
+    }
+
+    try {
+
+        await History.create({
+            user_Id: usercreated.dataValues.user_Id
+        });
+
+    }
+    catch (err) {
+        await User.destroy({ where: { user_Id: usercreated.dataValues.user_Id }, force: true});
+        res.status(500).json({ error: "Error al crear historial de nuevo usuario", details: err});
     }
 
     try {
