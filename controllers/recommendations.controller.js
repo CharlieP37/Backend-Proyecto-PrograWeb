@@ -204,7 +204,7 @@ const getLatest = async (req, res, next) => {
         const EmotionName = (await Promise.all(EmotionId.map(async (emotion) => Emotion.findAll({ attributes: ["name"], where: { emotion_Id: emotion.emotion_Id } })))).flat();
 
         let data = [];
-        for (let index = 0; index < Recommendations.length && index < 3; index++) {
+        for (let index = Recommendations.length - 1; index >= 0 && index > Recommendations.length - 4; index--) {
             const element = {
                 title: Recommendations[index].JSON.name, 
                 artist: Recommendations[index].JSON.artists.map(a => a.name).join(', '),
