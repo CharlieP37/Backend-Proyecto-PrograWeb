@@ -121,7 +121,7 @@ CREATE TABLE IF NOT EXISTS RECOMMENDATION (
     spotify_id INT NOT NULL,
     name VARCHAR(50) NOT NULL,
     URL TEXT NOT NULL,
-    feedback BIT NOT NULL,
+    feedback BIT,
     `JSON` JSON NOT NULL,
     type_Id INT NOT NULL,
     emotion_1 INT NOT NULL,
@@ -650,6 +650,15 @@ VALUES ("Blinding Lights", NOW(), NOW()),
 ("Gangsta's Paradise", NOW(), NOW()),
 ("Abracadabra", NOW(), NOW()),
 ("You're So Vain", NOW(), NOW());
+
+INSERT INTO TYPE (name)
+VALUES ("album"),
+("artist"),
+("playlist"),
+("track"),
+("show"),
+("episode"),
+("audiobook");
 
 CREATE USER 'user'@'%' IDENTIFIED WITH caching_sha2_password BY 'user123';
 

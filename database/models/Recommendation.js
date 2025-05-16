@@ -30,7 +30,7 @@ Recommendation.init(
         },
         feedback: {
             type: DataTypes.BOOLEAN,
-            allowNull: false
+            allowNull: true
         },
         JSON: {
             type: DataTypes.JSON,
