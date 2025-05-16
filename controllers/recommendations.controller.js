@@ -2,7 +2,7 @@ const axios = require('axios');
 const jwt = require("jsonwebtoken");
 const database = require("../database/config.js");
 const History = require("../database/models/History.js");
-const Recommendations = require("../database/models/Recommendation.js");
+const Recommendation = require("../database/models/Recommendation.js");
 const Type = require("../database/models/Type.js");
 const Emotion = require("../database/models/Emotion.js");
 const EmotionAnalysis = require("../database/models/EmotionAnalysis.js");
@@ -134,7 +134,7 @@ const saveRecommendation = async (req, res, next) => {
             date: Date.now()
         });
 
-        const recommendationcreated = await Recommendations.create({
+        const recommendationcreated = await Recommendation.create({
             history_Id: HistoryId[0].dataValues.history_Id,
             spotify_id: track.track.id,
             name: track.track.name,
@@ -155,11 +155,69 @@ const saveRecommendation = async (req, res, next) => {
 };
 
 const getHistory = async (req, res, next) => {
-    res.status(200).json({ message: "Exito" });
+    const { token } =  req.body;
+
+    const tokenpayload = await tokenVerification(token);
+
+    if (!tokenpayload) {
+        return res.status(500).json({ message: "Token verification failed" });
+    }
+
+    try {
+        const HistoryId = await History.findAll({ attributes: ['history_Id'], where: { user_Id: tokenpayload.id }});
+        const Recommendations = await Recommendation.findAll({ where: {history_Id: HistoryId[0].dataValues.history_Id} });
+        const Emotions = Recommendations.map((recomendation, index) => ({emotion: recomendation.emotion_1}));
+        const EmotionId = (await Promise.all(Emotions.map(async (emotion) => EmotionAnalysis.findAll({ attributes: ["emotion_Id"], where: { emotionanalysis_Id: emotion.emotion } })))).flat();
+        const EmotionName = (await Promise.all(EmotionId.map(async (emotion) => Emotion.findAll({ attributes: ["name"], where: { emotion_Id: emotion.emotion_Id } })))).flat();
+
+        let data = [];
+        for (let index = 0; index < Recommendations.length; index++) {
+            const element = {
+                title: Recommendations[index].JSON.name, 
+                artist: Recommendations[index].JSON.artists.map(a => a.name).join(', '),
+                image: Recommendations[index].JSON.album.images[1].url,
+                emotion: EmotionName[index].name,
+                feedback: Recommendations[index].feedback
+            };
+            data.push(element);
+        }
+        res.status(200).json({ result: data });
+    } catch (error) {
+        res.status(500).json({ error: "Error al obtener recomendaciones", details: error.message});
+    }
 };
 
 const getLatest = async (req, res, next) => {
-    res.status(200).json({ message: "Exito" });
+    const { token } =  req.body;
+
+    const tokenpayload = await tokenVerification(token);
+
+    if (!tokenpayload) {
+        return res.status(500).json({ message: "Token verification failed" });
+    }
+
+    try {
+        const HistoryId = await History.findAll({ attributes: ['history_Id'], where: { user_Id: tokenpayload.id }});
+        const Recommendations = await Recommendation.findAll({ where: {history_Id: HistoryId[0].dataValues.history_Id} });
+        const Emotions = Recommendations.map((recomendation, index) => ({emotion: recomendation.emotion_1}));
+        const EmotionId = (await Promise.all(Emotions.map(async (emotion) => EmotionAnalysis.findAll({ attributes: ["emotion_Id"], where: { emotionanalysis_Id: emotion.emotion } })))).flat();
+        const EmotionName = (await Promise.all(EmotionId.map(async (emotion) => Emotion.findAll({ attributes: ["name"], where: { emotion_Id: emotion.emotion_Id } })))).flat();
+
+        let data = [];
+        for (let index = 0; index < Recommendations.length && index < 3; index++) {
+            const element = {
+                title: Recommendations[index].JSON.name, 
+                artist: Recommendations[index].JSON.artists.map(a => a.name).join(', '),
+                image: Recommendations[index].JSON.album.images[1].url,
+                emotion: EmotionName[index].name,
+                feedback: Recommendations[index].feedback
+            };
+            data.push(element);
+        }
+        res.status(200).json({ result: data });
+    } catch (error) {
+        res.status(500).json({ error: "Error al obtener recomendaciones", details: error.message});
+    }
 };
 
 module.exports = { getRecommendation, getHistory, getLatest, saveRecommendation };
