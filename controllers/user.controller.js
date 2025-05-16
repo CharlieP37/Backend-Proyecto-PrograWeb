@@ -16,7 +16,7 @@ async function tokenVerification(token) {
 };
 
 const obtainInfo = async (req, res, next) => {
-    const { token } = req.body;
+    const token = req.headers.authorization?.split(' ')[1];
 
     const tokenpayload = await tokenVerification(token);
 
