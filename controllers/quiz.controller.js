@@ -7,13 +7,6 @@ const Quiz = require("../database/models/Quiz.js");
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-const getOptions = async (req, res, next) => {
-    const genreOptions = (await Genre.findAll()).map(a => a.name);
-    const artistOptions = (await Artist.findAll()).map(a => a.name);
-    const songOptions = (await Song.findAll()).map(a => a.name);
-    res.status(200).json({ genre: genreOptions, artists: artistOptions, songs: songOptions });
-};
-
 async function tokenVerification(token) {
     try {
 
@@ -21,8 +14,16 @@ async function tokenVerification(token) {
         return verifiedtoken;
         
     } catch (err) {
-        return res.status(500).json({ message: "Token verification failed", error: err });
+        console.error(`Token verification failed: ${err.message}`);
+        return false;
     }
+};
+
+const getOptions = async (req, res, next) => {
+    const genreOptions = (await Genre.findAll()).map(a => a.name);
+    const artistOptions = (await Artist.findAll()).map(a => a.name);
+    const songOptions = (await Song.findAll()).map(a => a.name);
+    res.status(200).json({ genre: genreOptions, artists: artistOptions, songs: songOptions });
 };
 
 const saveAnswers = async (req, res, next) => {
@@ -30,6 +31,10 @@ const saveAnswers = async (req, res, next) => {
     const { token, genre_Id, artist_Id, song_Id } = req.body;
 
     const tokenpayload = await tokenVerification(token);
+
+    if (!tokenpayload) {
+        return res.status(500).json({ message: "Token verification failed" });
+    }
 
     let quizcreated = null;
 

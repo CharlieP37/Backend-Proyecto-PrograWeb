@@ -3,6 +3,7 @@ var router = express.Router();
 var controller = require("../controllers/recommendations.controller");
 
 router.post('/', controller.getRecommendation);
+router.post('/save', controller.saveRecommendation);
 router.get('/history', controller.getHistory);
 router.get('/latest', controller.getLatest);
 

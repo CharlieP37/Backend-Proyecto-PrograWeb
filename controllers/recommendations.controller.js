@@ -1,8 +1,28 @@
 const axios = require('axios');
+const jwt = require("jsonwebtoken");
+const database = require("../database/config.js");
+const History = require("../database/models/History.js");
+const Recommendations = require("../database/models/Recommendation.js");
+const Type = require("../database/models/Type.js");
+const Emotion = require("../database/models/Emotion.js");
+const EmotionAnalysis = require("../database/models/EmotionAnalysis.js");
 require('dotenv').config();
 
 const clientId = process.env.SPOTIFY_CLIENT_ID;
 const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET;
+
+async function tokenVerification(token) {
+    try {
+
+        const verifiedtoken = jwt.verify(token, JWT_SECRET);
+        return verifiedtoken;
+        
+    } catch (err) {
+        console.error(`Token verification failed: ${err.message}`);
+        return false;
+    }
+};
 
 async function getAccessToken() {
     const authString = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
@@ -77,6 +97,63 @@ const getRecommendation = async (req, res, next) => {
 
 };
 
+const saveRecommendation = async (req, res, next) => {
+    const { token, emotions, track } =  req.body;
+
+    const tokenpayload = await tokenVerification(token);
+
+    if (!tokenpayload) {
+        return res.status(500).json({ message: "Token verification failed" });
+    }
+
+    try {
+
+        const HistoryId = await History.findAll({ attributes: ['history_Id'], where: { user_Id: tokenpayload.id }});
+
+        const EmotionId1 = await Emotion.findAll({ attributes: ['emotion_Id'], where: { name: emotions[0].Type } });
+        const EmotionId2 = await Emotion.findAll({ attributes: ['emotion_Id'], where: { name: emotions[1].Type } });
+        const EmotionId3 = await Emotion.findAll({ attributes: ['emotion_Id'], where: { name: emotions[2].Type } });
+
+        const TypeId = await Type.findAll({attributes: ["type_Id"], where: { name: track.track.type }});
+
+        const emotion1 = await EmotionAnalysis.create({
+            emotion_Id: EmotionId1[0].dataValues.emotion_Id,
+            confidence: emotions[0].Confidence,
+            date: Date.now()
+        });
+
+        const emotion2 = await EmotionAnalysis.create({
+            emotion_Id: EmotionId2[0].dataValues.emotion_Id,
+            confidence: emotions[1].Confidence,
+            date: Date.now()
+        });
+
+        const emotion3 = await EmotionAnalysis.create({
+            emotion_Id: EmotionId3[0].dataValues.emotion_Id,
+            confidence: emotions[2].Confidence,
+            date: Date.now()
+        });
+
+        const recommendationcreated = await Recommendations.create({
+            history_Id: HistoryId[0].dataValues.history_Id,
+            spotify_id: track.track.id,
+            name: track.track.name,
+            URL: track.track.external_urls.spotify,
+            feedback: null,
+            JSON: track.track,
+            type_Id: TypeId[0].dataValues.type_Id,
+            emotion_1: emotion1.dataValues.emotionanalysis_Id,
+            emotion_2: emotion2.dataValues.emotionanalysis_Id,
+            emotion_3: emotion3.dataValues.emotionanalysis_Id
+        });
+
+        return res.status(200).json({ message: "Recommendation saved successfully", recommendationcreated });
+
+    } catch (error) {
+        res.status(500).json({ error: "Error al guardar recomendación", details: error.message});
+    }
+};
+
 const getHistory = async (req, res, next) => {
     res.status(200).json({ message: "Exito" });
 };
@@ -85,4 +162,4 @@ const getLatest = async (req, res, next) => {
     res.status(200).json({ message: "Exito" });
 };
 
-module.exports = { getRecommendation, getHistory, getLatest };
+module.exports = { getRecommendation, getHistory, getLatest, saveRecommendation };

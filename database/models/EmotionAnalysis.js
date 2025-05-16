@@ -17,7 +17,7 @@ EmotionAnalysis.init(
             allowNull: false
         },
         confidence: {
-            type: DataTypes.DOUBLE(6,5),
+            type: DataTypes.DOUBLE(8,5),
             allowNull: false
         },
         date: {

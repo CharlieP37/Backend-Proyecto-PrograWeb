@@ -17,7 +17,7 @@ Recommendation.init(
             allowNull: false
         },
         spotify_id: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.STRING(50),
             allowNull: false
         },
         name: {

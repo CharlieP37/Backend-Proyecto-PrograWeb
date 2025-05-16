@@ -93,7 +93,7 @@ CREATE TABLE IF NOT EXISTS EMOTION (
 CREATE TABLE IF NOT EXISTS EMOTION_ANALYSIS (
 	emotionanalysis_Id INT AUTO_INCREMENT NOT NULL UNIQUE,
     emotion_Id INT NOT NULL,
-    confidence DOUBLE(6,5) NOT NULL,
+    confidence DOUBLE(8,5) NOT NULL,
     date DATETIME NOT NULL,
     CONSTRAINT PK_emotionanalysis_Id PRIMARY KEY (emotionanalysis_Id),
     CONSTRAINT FK_emotion_Id FOREIGN KEY (emotion_Id) REFERENCES EMOTION(emotion_Id)
@@ -118,7 +118,7 @@ CREATE TABLE IF NOT EXISTS TYPE (
 CREATE TABLE IF NOT EXISTS RECOMMENDATION (
 	recommendation_Id INT AUTO_INCREMENT NOT NULL UNIQUE,
     history_Id INT NOT NULL,
-    spotify_id INT NOT NULL,
+    spotify_id VARCHAR(50) NOT NULL,
     name VARCHAR(50) NOT NULL,
     URL TEXT NOT NULL,
     feedback BIT,
@@ -133,9 +133,9 @@ CREATE TABLE IF NOT EXISTS RECOMMENDATION (
     CONSTRAINT PK_recommendation_Id PRIMARY KEY (recommendation_Id),
     CONSTRAINT FK_history_Id FOREIGN KEY (history_Id) REFERENCES HISTORY(history_Id),
     CONSTRAINT FK_type_Id FOREIGN KEY (type_Id) REFERENCES TYPE(type_Id),
-    CONSTRAINT FK_emotion_1 FOREIGN KEY (emotion_1) REFERENCES EMOTION(emotion_Id),
-    CONSTRAINT FK_emotion_2 FOREIGN KEY (emotion_2) REFERENCES EMOTION(emotion_Id),
-    CONSTRAINT FK_emotion_3 FOREIGN KEY (emotion_3) REFERENCES EMOTION(emotion_Id)
+    CONSTRAINT FK_emotion_1 FOREIGN KEY (emotion_1) REFERENCES EMOTION_ANALYSIS(emotionanalysis_Id),
+    CONSTRAINT FK_emotion_2 FOREIGN KEY (emotion_2) REFERENCES EMOTION_ANALYSIS(emotionanalysis_Id),
+    CONSTRAINT FK_emotion_3 FOREIGN KEY (emotion_3) REFERENCES EMOTION_ANALYSIS(emotionanalysis_Id)
 );
 
 INSERT INTO COUNTRY (name, code)
