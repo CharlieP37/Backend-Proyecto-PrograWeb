@@ -177,7 +177,8 @@ const getHistory = async (req, res, next) => {
                 artist: Recommendations[index].JSON.artists.map(a => a.name).join(', '),
                 image: Recommendations[index].JSON.album.images[1].url,
                 emotion: EmotionName[index].name,
-                feedback: Recommendations[index].feedback
+                feedback: Recommendations[index].feedback,
+                date: Recommendations[index].createdAt.toISOString().split("T")[0]
             };
             data.push(element);
         }
