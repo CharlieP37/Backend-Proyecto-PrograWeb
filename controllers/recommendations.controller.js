@@ -225,8 +225,7 @@ const getLatest = async (req, res, next) => {
 const setFeedback = async (req, res) => {
 
     const { id } = req.params;
-    const { feedback } = req.body;
-    const token = req.headers.authorization?.split(' ')[1];
+    const { token, feedback } = req.body;
 
     const tokenpayload = await tokenVerification(token);
 
