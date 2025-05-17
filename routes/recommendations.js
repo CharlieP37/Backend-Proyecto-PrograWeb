@@ -6,5 +6,6 @@ router.post('/', controller.getRecommendation);
 router.post('/save', controller.saveRecommendation);
 router.get('/history', controller.getHistory);
 router.get('/latest', controller.getLatest);
+router.patch('/:id', controller.setFeedback);
 
 module.exports = router;

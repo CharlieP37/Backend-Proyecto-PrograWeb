@@ -33,7 +33,7 @@ const saveAnswers = async (req, res, next) => {
     const tokenpayload = await tokenVerification(token);
 
     if (!tokenpayload) {
-        return res.status(500).json({ message: "Token verification failed" });
+        return res.status(403).json({ message: "Token verification failed" });
     }
 
     let quizcreated = null;

@@ -103,7 +103,7 @@ const saveRecommendation = async (req, res, next) => {
     const tokenpayload = await tokenVerification(token);
 
     if (!tokenpayload) {
-        return res.status(500).json({ message: "Token verification failed" });
+        return res.status(403).json({ message: "Token verification failed" });
     }
 
     try {
@@ -160,7 +160,7 @@ const getHistory = async (req, res, next) => {
     const tokenpayload = await tokenVerification(token);
 
     if (!tokenpayload) {
-        return res.status(500).json({ message: "Token verification failed" });
+        return res.status(403).json({ message: "Token verification failed" });
     }
 
     try {
@@ -173,6 +173,7 @@ const getHistory = async (req, res, next) => {
         let data = [];
         for (let index = 0; index < Recommendations.length; index++) {
             const element = {
+                id: Recommendations[index].recommendation_Id,
                 title: Recommendations[index].JSON.name, 
                 artist: Recommendations[index].JSON.artists.map(a => a.name).join(', '),
                 image: Recommendations[index].JSON.album.images[1].url,
@@ -194,7 +195,7 @@ const getLatest = async (req, res, next) => {
     const tokenpayload = await tokenVerification(token);
 
     if (!tokenpayload) {
-        return res.status(500).json({ message: "Token verification failed" });
+        return res.status(403).json({ message: "Token verification failed" });
     }
 
     try {
@@ -221,4 +222,35 @@ const getLatest = async (req, res, next) => {
     }
 };
 
-module.exports = { getRecommendation, getHistory, getLatest, saveRecommendation };
+const setFeedback = async (req, res) => {
+
+    const { id } = req.params;
+    const { feedback } = req.body;
+    const token = req.headers.authorization?.split(' ')[1];
+
+    const tokenpayload = await tokenVerification(token);
+
+    if (!tokenpayload) {
+        return res.status(403).json({ message: "Token verification failed" });
+    }
+
+    try {
+        const recommendation = await Recommendation.findByPk(id);
+        if (!recommendation) {
+            return res.status(404).json({ message: "Recomendación no encontrada"})
+        }
+
+        await recommendation.update({
+            feedback: feedback,
+            updatedAt: new Date()
+        });
+
+        res.status(200).json({message: "Feedback actualizado con éxito", data: recommendation});
+
+    } catch (error) {
+        res.status(500).json({ error: "Error al obtener recomendaciones", details: error.message});
+    }
+
+};
+
+module.exports = { getRecommendation, getHistory, getLatest, saveRecommendation, setFeedback };

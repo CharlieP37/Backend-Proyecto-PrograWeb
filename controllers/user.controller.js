@@ -11,7 +11,7 @@ async function tokenVerification(token) {
         const verifiedtoken = jwt.verify(token, JWT_SECRET);
         return verifiedtoken;
     } catch (err) {
-        return res.status(500).json({ message: "Token verification failed", error: err });
+        return res.status(403).json({ message: "Token verification failed", error: err });
     }
 };
 
