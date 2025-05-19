@@ -11,7 +11,8 @@ async function tokenVerification(token) {
         const verifiedtoken = jwt.verify(token, JWT_SECRET);
         return verifiedtoken;
     } catch (err) {
-        return res.status(403).json({ message: "Token verification failed", error: err });
+        console.error(`Token verification failed: ${err.message}`);
+        return false;
     }
 };
 
@@ -20,10 +21,16 @@ const obtainInfo = async (req, res, next) => {
 
     const tokenpayload = await tokenVerification(token);
 
+    if (!tokenpayload) {
+        return res.status(403).json({ message: "Token verification failed" });
+    }
+
     try {
         const personInfo = await Person.findAll({ where: {user_Id: tokenpayload.id}});
-        console.log(personInfo);
-        res.status(200).json({ profile: personInfo });
+        const userInfo = await User.findByPk(personInfo[0].user_Id);
+        const coutryname = await Country.findByPk(personInfo[0].country_Id);
+        const profileInfo = { username: userInfo.username, email: userInfo.email, name: personInfo[0].name, lastname: personInfo[0].lastname, birthdate: personInfo[0].birthdate, sex: personInfo[0].sex, country: coutryname.name };
+        res.status(200).json({ profile: profileInfo });
     } catch(error) {
         res.status(500).json({ error: "Error al obtener datos del usuario ", message: error.message });
     }
@@ -42,6 +49,10 @@ const saveInfo = async (req, res, next) => {
     const { token, profile } = req.body;
 
     const tokenpayload = await tokenVerification(token);
+
+    if (!tokenpayload) {
+        return res.status(403).json({ message: "Token verification failed" });
+    }
 
     if (!profile.name || !profile.lastname || !profile.birthdate || !profile.sex || !profile.country){
         res.status(400).json({ error: "Error no se encuentran todos los datos necesarios" });
@@ -66,4 +77,41 @@ const saveInfo = async (req, res, next) => {
     
 };
 
-module.exports = { obtainInfo, obtainOptions, saveInfo };
+const updateInfo = async (req, res) => {
+    const { token, profile } = req.body;
+
+    const tokenpayload = await tokenVerification(token);
+
+    if (!tokenpayload) {
+        return res.status(403).json({ message: "Token verification failed" });
+    }
+
+    if (!profile.username || !profile.email || !profile.name || !profile.lastname || !profile.birthdate || !profile.sex || !profile.country){
+        res.status(400).json({ error: "Error no se encuentran todos los datos necesarios" });
+    }
+
+    try {
+        const user = await User.findByPk(tokenpayload.id);
+        const person = await Person.findAll( {where: {user_Id: tokenpayload.id}} );
+
+        await user.update({
+            email: profile.email,
+            updatedAt: new Date()
+        });
+
+        await person[0].update({
+            name: profile.name,
+            lastname: profile.lastname,
+            sex: profile.sex, 
+            country_Id: profile.country, 
+            updatedAt: new Date()
+        });
+
+        res.status(200).json({message: "Perfil actualizado con éxito", data: {user, person}});
+
+    } catch (error) {
+        res.status(500).json({ error: "Error al actualizar información de perfil.", details: error.message});
+    }
+};
+
+module.exports = { obtainInfo, obtainOptions, saveInfo, updateInfo };

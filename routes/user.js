@@ -5,5 +5,6 @@ var controller = require("../controllers/user.controller");
 router.get('/me', controller.obtainInfo);
 router.get('/options', controller.obtainOptions);
 router.post('/save', controller.saveInfo);
+router.patch('/update', controller.updateInfo);
 
 module.exports = router;
