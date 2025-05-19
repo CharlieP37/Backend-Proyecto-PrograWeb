@@ -1,7 +1,8 @@
-var express = require('express');
-var router = express.Router();
-var controller = require("../controllers/dashboard.controller");
+const express = require('express');
+const router = express.Router();
+const controller = require('../controllers/dashboard.controller');
+const authenticateToken = require('../middleware/authenticateToken.js'); 
 
-router.post('/weekly-summary', controller.weeklySummary);
+router.get('/weekly-summary', authenticateToken, controller.getWeeklySummary);
 
 module.exports = router;
